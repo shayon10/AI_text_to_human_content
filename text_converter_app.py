@@ -6,20 +6,17 @@ class TextConverterApp:
         self.master = master
         master.title("AI to Human Content Converter")
 
-        self.label = tk.Label(master, text="Enter AI-generated text:")
-        self.label.pack()
-
-        self.text_entry = tk.Entry(master, width=50)
-        self.text_entry.pack()
+        self.text_entry = tk.Text(master, height=10, width=40)
+        self.text_entry.pack(side=tk.LEFT, padx=10)
 
         self.convert_button = tk.Button(master, text="Convert", command=self.convert_text)
-        self.convert_button.pack()
+        self.convert_button.pack(side=tk.LEFT, padx=10)
 
-        self.result_label = tk.Label(master, text="")
-        self.result_label.pack()
+        self.result_text = tk.Text(master, height=10, width=40, state=tk.DISABLED)
+        self.result_text.pack(side=tk.LEFT, padx=10)
 
     def convert_text(self):
-        ai_text = self.text_entry.get()
+        ai_text = self.text_entry.get("1.0", tk.END)
 
         # Use a pre-trained GPT-2 model for text conversion
         model = GPT2LMHeadModel.from_pretrained("gpt2")
@@ -31,7 +28,10 @@ class TextConverterApp:
 
         # Decode and display the converted text
         human_text = tokenizer.decode(output[0], skip_special_tokens=True)
-        self.result_label.config(text="Human-like Content:\n" + human_text)
+        self.result_text.config(state=tk.NORMAL)
+        self.result_text.delete("1.0", tk.END)
+        self.result_text.insert(tk.END, human_text)
+        self.result_text.config(state=tk.DISABLED)
 
 if __name__ == "__main__":
     root = tk.Tk()
